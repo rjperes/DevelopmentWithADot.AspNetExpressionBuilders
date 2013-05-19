@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevelopmentWithADot.AspNetExpressionBuilders", "DevelopmentWithADot.AspNetExpressionBuilders\DevelopmentWithADot.AspNetExpressionBuilders.csproj", "{44E9B1DA-0BE0-4E4A-A8A2-37BA88922C71}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4D82A249-956C-4418-8431-41342D21E7B4}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44E9B1DA-0BE0-4E4A-A8A2-37BA88922C71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44E9B1DA-0BE0-4E4A-A8A2-37BA88922C71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44E9B1DA-0BE0-4E4A-A8A2-37BA88922C71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44E9B1DA-0BE0-4E4A-A8A2-37BA88922C71}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
