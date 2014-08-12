@@ -16,16 +16,6 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 	[ExpressionPrefix("Code")]
 	public sealed class CodeExpressionBuilder : ExpressionBuilder
 	{
-		#region Public override properties
-		public override Boolean SupportsEvaluate
-		{
-			get
-			{
-				return (true);
-			}
-		}
-		#endregion
-
 		#region Public override methods
 		public override CodeExpression GetCodeExpression(BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
 		{
@@ -34,11 +24,11 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 
 		public override Object EvaluateExpression(Object target, BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
 		{
-			Page item = HttpContext.Current.Handler as Page;
-			CodeTypeDeclaration tempClass = new CodeTypeDeclaration("TempClass");
+			var item = HttpContext.Current.Handler as Page;
+			var tempClass = new CodeTypeDeclaration("TempClass");
 			tempClass.IsClass = true;
 
-			CodeMemberMethod tempMethod = new CodeMemberMethod();
+			var tempMethod = new CodeMemberMethod();
 			tempMethod.Name = "GetValue";
 			tempMethod.Attributes = MemberAttributes.Public;
 			tempMethod.ReturnType = new CodeTypeReference(typeof(Object));
@@ -48,13 +38,13 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 			{
 				tempMethod.Parameters.Add(new CodeParameterDeclarationExpression(item.GetType(), "page"));
 			}
-			
+
 			tempMethod.Statements.Add(new CodeMethodReturnStatement(this.GetCodeExpression(entry, parsedData, context)));
 			tempClass.Members.Add(tempMethod);
 
 			//Compile that class
-			CodeCompileUnit unit = new CodeCompileUnit();
-			CodeNamespace ns = new CodeNamespace("Temp");
+			var unit = new CodeCompileUnit();
+			var ns = new CodeNamespace("Temp");
 			ns.Types.Add(tempClass);
 			//Import declarations
 			ns.Imports.Add(new CodeNamespaceImport("System"));
@@ -68,40 +58,66 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 			ns.Imports.Add(new CodeNamespaceImport("System.Web.UI.HtmlControls"));
 
 			unit.Namespaces.Add(ns);
-			CompilerParameters compilerParams = new CompilerParameters();
+			var compilerParams = new CompilerParameters();
 			compilerParams.GenerateInMemory = true;
-			//Add references
-			List<String> references = new List<String>();
 
+			//Add references
+			var references = new List<String>();
 			references.Add(typeof(String).Assembly.Location);
 			references.Add(typeof(Component).Assembly.Location);
 			references.Add(typeof(DataTable).Assembly.Location);
 			references.Add(typeof(Button).Assembly.Location);
 			references.Add(Assembly.GetCallingAssembly().Location);
 			references.Add(Assembly.GetExecutingAssembly().Location);
-			
-			foreach (String name in references)
+
+			foreach (var name in references)
 			{
 				compilerParams.ReferencedAssemblies.Add(name);
 			}
 
-			CodeDomProvider compiler = new CSharpCodeProvider();
+			var compiler = new CSharpCodeProvider();
 
-			CompilerResults results = compiler.CompileAssemblyFromDom(compilerParams, unit);
+			var results = compiler.CompileAssemblyFromDom(compilerParams, unit);
 
-			Type type = results.CompiledAssembly.GetExportedTypes()[0];
+			var type = results.CompiledAssembly.GetExportedTypes()[0];
 
-			Object obj = Activator.CreateInstance(type);
+			var obj = Activator.CreateInstance(type);
 
-			MethodInfo mi = obj.GetType().GetMethod("GetValue", BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod);
+			var mi = obj.GetType().GetMethod("GetValue", BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod);
 
 			if (item != null)
 			{
-				return (mi.Invoke(obj, new Object [] { item, entry.Expression }));
+				return (Convert(mi.Invoke(obj, new Object [] { item, entry.Expression }), entry.PropertyInfo.PropertyType));
 			}
 			else
 			{
-				return (mi.Invoke(obj, new Object [] { entry.Expression }));
+				return (Convert(mi.Invoke(obj, new Object[] { entry.Expression }), entry.PropertyInfo.PropertyType));
+			}
+		}
+		#endregion
+
+		#region Protected static methods
+		protected static Object Convert(Object value, Type type)
+		{
+			if (value == null)
+			{
+				return (value);
+			}
+			else if (type == typeof(String))
+			{
+				return (value.ToString());
+			}
+			else if ((value is IConvertible) && (typeof(IConvertible).IsAssignableFrom(type) == true))
+			{
+				return (System.Convert.ChangeType(value, type));
+			}
+			else if (type.IsEnum == true)
+			{
+				return (Enum.Parse(type, value.ToString(), true));
+			}
+			else
+			{
+				return (value);
 			}
 		}
 		#endregion

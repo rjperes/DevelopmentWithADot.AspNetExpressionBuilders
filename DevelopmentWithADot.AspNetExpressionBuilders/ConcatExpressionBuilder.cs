@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -10,10 +9,10 @@ using System.Web.UI;
 namespace DevelopmentWithADot.AspNetExpressionBuilders
 {
     [ExpressionPrefix("Concat")]
-    public sealed class ConcatExpressionBuilder : ExpressionBuilder
+    public sealed class ConcatExpressionBuilder : ConvertedExpressionBuilder
     {
         #region Public static methods
-        public static String Concat(String values)
+        public static Object Concat(String values, Type propertyType)
         {
             StringBuilder builder = new StringBuilder();
             String[] parts = values.Split(',');
@@ -55,31 +54,18 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 
         public override Object EvaluateExpression(Object target, BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
         {
-            return (Concat(entry.Expression));
+            return (Concat(entry.Expression, entry.PropertyInfo.PropertyType));
         }
 
-        public override CodeExpression GetCodeExpression(BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
-        {
-            if (String.IsNullOrWhiteSpace(entry.Expression) == true)
-            {
-                return (new CodePrimitiveExpression(String.Empty));
-            }
-            else
-            {
-                return (new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(this.GetType()), "Concat"), new CodePrimitiveExpression(entry.Expression)));
-            }
-        }
         #endregion
 
         #region Public override properties
 
-        public override Boolean SupportsEvaluate
-        {
-            get
-            {
-                return (true);
-            }
-        }
+		public override String MethodName
+		{
+			get { return("Concat"); }
+		}
+
         #endregion        
     }
 }

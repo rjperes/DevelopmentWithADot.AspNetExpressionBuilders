@@ -1,5 +1,4 @@
 using System;
-using System.CodeDom;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
@@ -10,18 +9,6 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 	public sealed class CookieExpressionBuilder : ConvertedExpressionBuilder
 	{
 		#region Public override methods
-		public override CodeExpression GetCodeExpression(BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
-		{
-			if (String.IsNullOrWhiteSpace(entry.Expression) == true)
-			{
-				return (new CodePrimitiveExpression(String.Empty));
-			}
-			else
-			{
-				return (new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(this.GetType()), "GetCookieValue"), new CodePrimitiveExpression(entry.Expression), new CodeTypeOfExpression(entry.PropertyInfo.PropertyType)));
-			}
-		}
-
 		public override Object EvaluateExpression(Object target, BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
 		{
 			return (GetCookieValue(entry.Expression, entry.PropertyInfo.PropertyType));
@@ -29,13 +16,12 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 		#endregion
 
 		#region Public override properties
-		public override Boolean SupportsEvaluate
+
+		public override String MethodName
 		{
-			get
-			{
-				return (true);
-			}
+			get { return ("GetCookieValue"); }
 		}
+
 		#endregion
 
 		#region Public static methods

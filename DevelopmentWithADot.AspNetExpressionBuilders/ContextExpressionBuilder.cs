@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
@@ -25,26 +24,13 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 			return (GetValue(entry.Expression, entry.PropertyInfo.PropertyType));
 		}
 
-		public override CodeExpression GetCodeExpression(BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
-		{			
-			if (String.IsNullOrWhiteSpace(entry.Expression) == true)
-			{
-				return (new CodePrimitiveExpression(String.Empty));
-			}
-			else
-			{
-				return (new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(this.GetType()), "GetValue"), new CodePrimitiveExpression(entry.Expression.Trim()), new CodeTypeOfExpression(entry.PropertyInfo.PropertyType)));
-			}
-		}
 		#endregion
 
 		#region Public override properties
-		public override Boolean SupportsEvaluate
+
+		public override String MethodName
 		{
-			get
-			{
-				return (true);
-			}
+			get { return("GetValue"); }
 		}
 		#endregion
 	}

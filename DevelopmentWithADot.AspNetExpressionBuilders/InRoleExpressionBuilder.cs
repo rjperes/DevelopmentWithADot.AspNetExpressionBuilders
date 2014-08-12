@@ -1,5 +1,4 @@
 using System;
-using System.CodeDom;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
@@ -7,39 +6,24 @@ using System.Web.UI;
 namespace DevelopmentWithADot.AspNetExpressionBuilders
 {
 	[ExpressionPrefix("InRole")]
-	public sealed class InRoleExpressionBuilder : ExpressionBuilder
+	public sealed class InRoleExpressionBuilder : ConvertedExpressionBuilder
 	{
 		#region Public override methods
-		public override CodeExpression GetCodeExpression(BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
-		{
-			if (String.IsNullOrWhiteSpace(entry.Expression) == true)
-			{
-				return (new CodePrimitiveExpression(String.Empty));
-			}
-			else
-			{
-				return (new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(this.GetType()), "InRole"), new CodePrimitiveExpression(entry.Expression)));
-			}
-		}
-
 		public override Object EvaluateExpression(Object target, BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
 		{
-			return (InRole(entry.Expression));
+			return (InRole(entry.Expression, entry.PropertyInfo.PropertyType));
 		}
 		#endregion
 
 		#region Public override properties
-		public override Boolean SupportsEvaluate
+		public override String MethodName
 		{
-			get
-			{
-				return (true);
-			}
+			get { return("InRole"); }
 		}
 		#endregion
 
 		#region Public static methods
-		public static Boolean InRole(String role)
+		public static Boolean InRole(String role, Type propertyType)
 		{
 			if (String.Equals(role, "*") == true)
 			{

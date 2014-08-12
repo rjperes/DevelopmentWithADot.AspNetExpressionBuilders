@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections;
 using System.Globalization;
 using System.Linq;
@@ -10,22 +9,22 @@ using System.Web.UI;
 namespace DevelopmentWithADot.AspNetExpressionBuilders
 {
 	[ExpressionPrefix("Format")]
-	public sealed class FormatExpressionBuilder : ExpressionBuilder
+	public sealed class FormatExpressionBuilder : ConvertedExpressionBuilder
 	{
 		#region Public static methods
 		public static String Format(String values)
 		{
-			String[] parts = values.Split(',');
-			ArrayList list = new ArrayList();
-			String format = String.Empty;
+			var parts = values.Split(',');
+			var list = new ArrayList();
+			var format = String.Empty;
 
 			foreach (String part in parts)
 			{
-				String p = part.Trim();
+				var p = part.Trim();
 
 				if (p.StartsWith("\'", StringComparison.OrdinalIgnoreCase) == true)
 				{
-					Int32 i = p.IndexOf('\'', 1);
+					var i = p.IndexOf('\'', 1);
 
 					if (String.IsNullOrWhiteSpace(format) == true)
 					{
@@ -63,10 +62,10 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 					{
 						if (p.Contains('.') == true)
 						{
-							String[] resourceParts = p.Split('.');
-							String classKey = resourceParts[0];
-							String resourceKey = resourceParts[1];
-							String resourceValue = HttpContext.GetGlobalResourceObject(classKey, resourceKey, CultureInfo.CurrentUICulture).ToString();
+							var resourceParts = p.Split('.');
+							var classKey = resourceParts[0];
+							var resourceKey = resourceParts[1];
+							var resourceValue = HttpContext.GetGlobalResourceObject(classKey, resourceKey, CultureInfo.CurrentUICulture).ToString();
 
 							if (String.IsNullOrWhiteSpace(format) == true)
 							{
@@ -80,8 +79,8 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 						}
 						else
 						{
-							String resourceKey = p;
-							String resourceValue = String.Empty;
+							var resourceKey = p;
+							var resourceValue = String.Empty;
 
 							try
 							{
@@ -130,46 +129,18 @@ namespace DevelopmentWithADot.AspNetExpressionBuilders
 		/// </returns>
 		public override Object EvaluateExpression(Object target, BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
 		{
-			return (Format(entry.Expression));
+			return (Convert(Format(entry.Expression), entry.PropertyInfo.PropertyType));
 		}
 
-		/// <summary>
-		/// When overridden in a derived class, returns code that is used during page execution to obtain the evaluated expression.
-		/// </summary>
-		/// <param name="entry">The object that represents information about the property bound to by the expression.</param>
-		/// <param name="parsedData">The object containing parsed data as returned by <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)"/>.</param>
-		/// <param name="context">Contextual information for the evaluation of the expression.</param>
-		/// <returns>
-		/// A <see cref="T:System.CodeDom.CodeExpression"/> that is used for property assignment.
-		/// </returns>
-		public override CodeExpression GetCodeExpression(BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
-		{
-			if (String.IsNullOrWhiteSpace(entry.Expression) == true)
-			{
-				return (new CodePrimitiveExpression(String.Empty));
-			}
-			else
-			{
-				return (new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeTypeReferenceExpression(this.GetType()), "Format"), new CodePrimitiveExpression(entry.Expression)));
-			}
-		}
 		#endregion
 
 		#region Public override properties
 
-		/// <summary>
-		/// When overridden in a derived class, returns a value indicating whether the current <see cref="T:System.Web.Compilation.ExpressionBuilder"/> object supports no-compile pages.
-		/// </summary>
-		/// <value></value>
-		/// <returns>true if the <see cref="T:System.Web.Compilation.ExpressionBuilder"/> supports expression evaluation; otherwise, false.
-		/// </returns>
-		public override Boolean SupportsEvaluate
+		public override String MethodName
 		{
-			get
-			{
-				return (true);
-			}
+			get { return("Format"); }
 		}
+
 		#endregion
 	}
 }

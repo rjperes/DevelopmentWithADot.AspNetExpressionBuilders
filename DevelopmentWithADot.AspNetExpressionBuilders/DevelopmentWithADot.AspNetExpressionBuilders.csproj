@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DevelopmentWithADot.AspNetExpressionBuilders</RootNamespace>
     <AssemblyName>DevelopmentWithADot.AspNetExpressionBuilders</AssemblyName>
-    <TargetFrameworkVersion>v4.0.3</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,8 +37,12 @@
     <AssemblyOriginatorKeyFile>..\..\DevelopmentWithADot.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -46,6 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MemoryCacheExpressionBuilder.cs" />
+    <Compile Include="CacheExpressionBuilder.cs" />
     <Compile Include="ApplicationExpressionBuilder.cs" />
     <Compile Include="CodeExpressionBuilder.cs" />
     <Compile Include="ConcatExpressionBuilder.cs" />
@@ -57,6 +64,7 @@
     <Compile Include="ProfileExpressionBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStringExpressionBuilder.cs" />
+    <Compile Include="ServiceLocatorExpressionBuilder.cs" />
     <Compile Include="SessionExpressionBuilder.cs" />
     <Compile Include="ThemeFileUrlExpressionBuilder.cs" />
     <Compile Include="ViewStateExpressionBuilder.cs" />
@@ -66,6 +74,7 @@
     <None Include="..\..\DevelopmentWithADot.snk">
       <Link>DevelopmentWithADot.snk</Link>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

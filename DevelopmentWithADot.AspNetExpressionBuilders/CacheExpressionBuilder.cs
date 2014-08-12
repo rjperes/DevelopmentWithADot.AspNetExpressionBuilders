@@ -5,37 +5,38 @@ using System.Web.UI;
 
 namespace DevelopmentWithADot.AspNetExpressionBuilders
 {
-	[ExpressionPrefix("Profile")]
-	public sealed class ProfileExpressionBuilder : ConvertedExpressionBuilder
+	[ExpressionPrefix("Cache")]
+	public sealed class CacheExpressionBuilder : ConvertedExpressionBuilder
 	{
 		#region Public override methods
-
 		public override Object EvaluateExpression(Object target, BoundPropertyEntry entry, Object parsedData, ExpressionBuilderContext context)
 		{
-			return (GetProfileProperty(entry.Expression, entry.PropertyInfo.PropertyType));
+			return (GetCacheValue(entry.Expression, entry.PropertyInfo.PropertyType));
 		}
 		#endregion
 
 		#region Public override properties
+
 		public override String MethodName
 		{
-			get { return("GetProfileProperty"); }
+			get { return ("GetCacheValue"); }
 		}
-
 		#endregion
 
 		#region Public static methods
-		public static Object GetProfileProperty(String propertyName, Type propertyType)
+		public static Object GetCacheValue(String name, Type propertyType)
 		{
 			Object value = null;
 
-			if (propertyName.Contains(".") == false)
+			if (name.Contains(".") == false)
 			{
-				value = HttpContext.Current.Profile.GetPropertyValue(propertyName);
+				value = HttpContext.Current.Cache [ name ];
 			}
 			else
 			{
-				value = DataBinder.Eval(HttpContext.Current.Profile, propertyName);
+				var parts = name.Split('.');
+
+				value = DataBinder.Eval(HttpContext.Current.Cache [ parts [ 0 ] ], String.Join(".", parts, 1, parts.Length - 1));
 			}
 
 			return (Convert(value, propertyType));
